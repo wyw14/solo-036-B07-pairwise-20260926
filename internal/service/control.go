@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math"
 	"sort"
 	"strings"
 	"time"
@@ -169,6 +170,9 @@ func (r *Runtime) recordIncident(runID, severity, message string) model.Incident
 
 func (r *Runtime) ValidateLaunchRequest(request LaunchRequest) error {
 	control := r.ensureControl()
+	if math.IsNaN(request.TargetPressure) || math.IsInf(request.TargetPressure, 0) {
+		return errors.New("target pressure must be a finite number")
+	}
 	station, ok := control.Stations[request.StationID]
 	if !ok {
 		return fmt.Errorf("unknown launch station %s", request.StationID)

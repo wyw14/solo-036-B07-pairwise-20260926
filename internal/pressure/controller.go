@@ -2,6 +2,7 @@ package pressure
 
 import (
 	"fmt"
+	"math"
 	"sync"
 )
 
@@ -23,6 +24,9 @@ func (c *Controller) Apply(runID string, value float64) error {
 	}
 	if runID == "" {
 		return fmt.Errorf("missing run")
+	}
+	if math.IsNaN(value) || math.IsInf(value, 0) {
+		return fmt.Errorf("pressure value must be finite")
 	}
 	c.current = value
 	c.history = append(c.history, value)
