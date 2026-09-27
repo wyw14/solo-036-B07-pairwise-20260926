@@ -3,6 +3,7 @@ package model
 import (
 	"errors"
 	"fmt"
+	"math"
 	"sort"
 	"strings"
 	"time"
@@ -158,6 +159,9 @@ func (v ValveState) Validate() error {
 func (p PressureState) Validate(limit float64) error {
 	if p.StationID == "" {
 		return errors.New("pressure station is required")
+	}
+	if math.IsNaN(p.Value) || math.IsNaN(p.Target) || math.IsInf(p.Value, 0) || math.IsInf(p.Target, 0) {
+		return errors.New("pressure values must be finite")
 	}
 	if p.Value < 0 || p.Target < 0 {
 		return errors.New("pressure values must be non-negative")

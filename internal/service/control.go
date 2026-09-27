@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math"
 	"sort"
 	"strings"
 	"time"
@@ -182,6 +183,9 @@ func (r *Runtime) ValidateLaunchRequest(request LaunchRequest) error {
 	}
 	if routeState.FromStation != station.ID {
 		return errors.New("route does not start at launcher")
+	}
+	if math.IsNaN(request.TargetPressure) || math.IsInf(request.TargetPressure, 0) {
+		return errors.New("target pressure must be a finite number")
 	}
 	if _, err := control.Network.Path(routeState.FromStation, routeState.ToStation, request.TargetPressure); err != nil {
 		return err

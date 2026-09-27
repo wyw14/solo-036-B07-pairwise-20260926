@@ -4,6 +4,7 @@ import (
 	"container/heap"
 	"errors"
 	"fmt"
+	"math"
 	"sort"
 	"time"
 
@@ -177,6 +178,9 @@ func (n *Network) Path(from, to string, requestedPressure float64) (Path, error)
 	}
 	if _, ok := n.stations[to]; !ok {
 		return Path{}, fmt.Errorf("unknown destination station %s", to)
+	}
+	if math.IsNaN(requestedPressure) || math.IsInf(requestedPressure, 0) {
+		return Path{}, errors.New("requested pressure must be finite")
 	}
 	if requestedPressure <= 0 {
 		return Path{}, errors.New("requested pressure must be positive")
